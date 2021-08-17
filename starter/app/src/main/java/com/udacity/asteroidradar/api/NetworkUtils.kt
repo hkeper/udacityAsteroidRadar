@@ -1,7 +1,10 @@
 package com.udacity.asteroidradar.api
 
-import com.udacity.asteroidradar.Asteroid
-import com.udacity.asteroidradar.Constants
+import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
+import com.udacity.asteroidradar.domain.Asteroid
+import com.udacity.asteroidradar.util.Constants
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*

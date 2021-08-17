@@ -7,3 +7,6 @@ Use the updated Gradle version in the `~/gradle/wrapper/gradle-wrapper.propertie
 ```
 distributionUrl = https\://services.gradle.org/distributions/gradle-6.1.1-all.zip
 ```
+
+## Using NASA API key
+Use your own NASA API key, to work with application add it to `~/res/values/strings.xml` file, to the value `nasa_api_key`.
