@@ -3,7 +3,20 @@ package com.udacity.asteroidradar
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.databinding.BindingAdapter
+import com.squareup.picasso.Picasso
+
+@BindingAdapter("imageUrl")
+fun bindImage(imgView: ImageView, imgUrl: String?) {
+    imgUrl?.let {
+        Picasso.with(imgView.context)
+            .load(it)
+            .placeholder(R.drawable.loading_animation)
+            .error(R.drawable.ic_broken_image)
+            .into(imgView);
+    }
+}
 
 @BindingAdapter("statusIcon")
 fun bindAsteroidStatusImage(imageView: ImageView, isHazardous: Boolean) {
@@ -41,12 +54,6 @@ fun bindTextViewToDisplayVelocity(textView: TextView, number: Double) {
     textView.text = String.format(context.getString(R.string.km_s_unit_format), number)
 }
 
-@BindingAdapter("textWithParentheses")
-fun bindTextViewToDisplayWithParentheses(textView: TextView, text: String){
-    val context = textView.context
-    textView.text = context.getString(R.string.text_parentheses_format, text)
-}
-
 @BindingAdapter("longToString")
 fun bindTextViewToDisplayLong(textView: TextView, number: Long) {
     textView.text = number.toString()
@@ -59,3 +66,4 @@ fun bindTextViewToDisplayLong(textView: TextView, number: Long) {
 fun goneIfNotNull(view: View, it: Any?) {
     view.visibility = if (it != null) View.GONE else View.VISIBLE
 }
+

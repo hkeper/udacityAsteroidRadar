@@ -9,4 +9,4 @@ distributionUrl = https\://services.gradle.org/distributions/gradle-6.1.1-all.zi
 ```
 
 ## Using NASA API key
-Use your own NASA API key, to work with application add it to `~/res/values/strings.xml` file, to the value `nasa_api_key`.
+Use your own NASA API key, to work with application add it to `~src/main/java/com/udacity/asteroidradar/util/Constants.kt` file, to the variable `API_KEY`.
