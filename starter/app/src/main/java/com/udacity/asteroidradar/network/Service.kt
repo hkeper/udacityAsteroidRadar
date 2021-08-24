@@ -4,16 +4,12 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.udacity.asteroidradar.domain.PictureOfDay
 import com.udacity.asteroidradar.util.Constants
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-/**
- * A retrofit service to fetch a devbyte playlist.
- */
 interface AsteroidsApiService {
     @GET("neo/rest/v1/feed")
     suspend fun getAsteroidsList(@Query("start_date") start_date: String,
@@ -35,7 +31,6 @@ private val moshi = Moshi.Builder()
     .build()
 
 object Network {
-    // Configure retrofit to parse JSON and use coroutines
     private val retrofitAsteroids = Retrofit.Builder()
         .baseUrl(Constants.BASE_URL)
         .addConverterFactory(ScalarsConverterFactory.create())
