@@ -7,7 +7,7 @@ import com.udacity.asteroidradar.domain.PictureOfDay
 
 @Dao
 interface AsteroidDao {
-    @Query("select * from databaseasteroid order by closeApproachDate desc")
+    @Query("select * from databaseasteroid order by closeApproachDate asc")
     fun getAsteroids(): LiveData<List<DatabaseAsteroid>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -17,10 +17,12 @@ interface AsteroidDao {
     fun insertPictureOfDay(vararg pictureOfDay: DatabasePicture)
 
     @Query("select * from databasepicture")
-    fun getPictureOfDay(): LiveData<List<DatabaseAsteroid>>
+    fun getPictureOfDay(): LiveData<DatabasePicture>
 }
 
-@Database(entities = [DatabaseAsteroid::class, DatabasePicture::class], version = 1)
+@Database(entities = [DatabaseAsteroid::class, DatabasePicture::class],
+    version = 2,
+    exportSchema = false)
 abstract class AsteroidsDatabase : RoomDatabase() {
     abstract val asteroidDao: AsteroidDao
 }
@@ -30,9 +32,12 @@ private lateinit var INSTANCE: AsteroidsDatabase
 fun getDatabase(context: Context): AsteroidsDatabase {
     synchronized(AsteroidsDatabase::class.java) {
         if (!::INSTANCE.isInitialized) {
-            INSTANCE = Room.databaseBuilder(context.applicationContext,
+            INSTANCE = Room.databaseBuilder(
+                context.applicationContext,
                 AsteroidsDatabase::class.java,
-                "asteroids").build()
+                "asteroids")
+                .fallbackToDestructiveMigration()
+                .build()
         }
     }
     return INSTANCE

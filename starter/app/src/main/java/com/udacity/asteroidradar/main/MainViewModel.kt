@@ -26,21 +26,27 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val status: LiveData<ApiStatus>
         get() = _status
 
-    private val _asteroidsList = MutableLiveData<List<Asteroid>>()
-    val asteroidsList: LiveData<List<Asteroid>>
-        get() = _asteroidsList
+//    private val _asteroidsList = MutableLiveData<List<Asteroid>>()
+//    val asteroidsList: LiveData<List<Asteroid>>
+//        get() = _asteroidsList
 
-    private val _pictureOfDay = MutableLiveData<PictureOfDay>()
-    val pictureOfDay: LiveData<PictureOfDay>
-        get() = _pictureOfDay
+    val asteroidsList = asteroidsRepository.asteroids
+
+//    private val _pictureOfDay = MutableLiveData<PictureOfDay>()
+//    val pictureOfDay: LiveData<PictureOfDay>
+//        get() = _pictureOfDay
+
+    val pictureOfDay = asteroidsRepository.pictureOfDay
 
     private val _navigateToDetails = MutableLiveData<Asteroid?>()
     val navigateToDetails
         get() = _navigateToDetails
 
     init{
-        getAsteroids()
-        getPictureOfDay()
+//        getAsteroids()
+//        getPictureOfDay()
+        refreshAsteroid()
+        refreshPicOfDay()
     }
 
     fun onAsteroidClicked(asteroid: Asteroid){
@@ -51,35 +57,47 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _navigateToDetails.value = null
     }
 
-    private fun getAsteroids(){
+    private fun refreshAsteroid() {
         viewModelScope.launch {
-            _status.value = ApiStatus.LOADING
-            try{
-                val asteroidsString = Network.asteroids.getAsteroidsList(
-                    getNextSevenDaysFormattedDates()[0],
-                    getNextSevenDaysFormattedDates()[getNextSevenDaysFormattedDates().size-2],
-                    Constants.API_KEY)
-                val json = JSONObject(asteroidsString)
-                _asteroidsList.postValue(parseAsteroidsJsonResult(json))
-                _status.value = ApiStatus.DONE
-            } catch (e: Exception) {
-                Log.e("Error getting Asteroids", e.toString())
-                _status.value = ApiStatus.ERROR
-            }
+            asteroidsRepository.refreshAsteroids()
         }
     }
 
-    private fun getPictureOfDay() {
+    private fun refreshPicOfDay() {
         viewModelScope.launch {
-            _status.value = ApiStatus.LOADING
-            try {
-                _pictureOfDay.value = Network.pictureOfDay.getPictureOfDay(Constants.API_KEY)
-                _status.value = ApiStatus.DONE
-            } catch (e: Exception) {
-                Log.e("Error Picture of Day", e.toString())
-                _status.value = ApiStatus.ERROR
-            }
+            asteroidsRepository.refreshPictureOfDay()
         }
     }
+
+//    private fun getAsteroids(){
+//        viewModelScope.launch {
+//            _status.value = ApiStatus.LOADING
+//            try{
+//                val asteroidsString = Network.asteroids.getAsteroidsList(
+//                    getNextSevenDaysFormattedDates()[0],
+//                    getNextSevenDaysFormattedDates()[getNextSevenDaysFormattedDates().size-2],
+//                    Constants.API_KEY)
+//                val json = JSONObject(asteroidsString)
+//                _asteroidsList.postValue(parseAsteroidsJsonResult(json))
+//                _status.value = ApiStatus.DONE
+//            } catch (e: Exception) {
+//                Log.e("Error getting Asteroids", e.toString())
+//                _status.value = ApiStatus.ERROR
+//            }
+//        }
+//    }
+
+//    private fun getPictureOfDay() {
+//        viewModelScope.launch {
+//            _status.value = ApiStatus.LOADING
+//            try {
+//                _pictureOfDay.value = Network.pictureOfDay.getPictureOfDay(Constants.API_KEY)
+//                _status.value = ApiStatus.DONE
+//            } catch (e: Exception) {
+//                Log.e("Error Picture of Day", e.toString())
+//                _status.value = ApiStatus.ERROR
+//            }
+//        }
+//    }
 
 }
