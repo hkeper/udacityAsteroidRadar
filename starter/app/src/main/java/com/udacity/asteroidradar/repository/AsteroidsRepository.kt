@@ -16,12 +16,26 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
+enum class AsteroidsFilter() { SHOW_WEEK, SHOW_TODAY, SHOW_SAVED }
+
 class AsteroidsRepository (private val database: AsteroidsDatabase) {
 
-    val asteroids: LiveData<List<Asteroid>> =
-        Transformations.map(database.asteroidDao.getAsteroids()){
-            it.asDomainModel()
+    fun getAsteroids(filter: AsteroidsFilter): LiveData<List<Asteroid>> {
+        return when (filter) {
+            AsteroidsFilter.SHOW_WEEK -> Transformations.map(database.asteroidDao.getWeekAsteroids()) {
+                it.asDomainModel()
+            }
+            AsteroidsFilter.SHOW_TODAY -> Transformations.map(database.asteroidDao.getTodayAsteroids()) {
+                it.asDomainModel()
+            }
+            AsteroidsFilter.SHOW_SAVED -> Transformations.map(database.asteroidDao.getAllAsteroids()) {
+                it.asDomainModel()
+            }
+            else -> Transformations.map(database.asteroidDao.getWeekAsteroids()) {
+                it.asDomainModel()
+            }
         }
+    }
 
     val pictureOfDay = Transformations.map(database.asteroidDao.getPictureOfDay()){
         it?.asDomainModel()
@@ -48,6 +62,7 @@ class AsteroidsRepository (private val database: AsteroidsDatabase) {
         withContext(Dispatchers.IO) {
             try {
                 val picture = Network.pictureOfDay.getPictureOfDay(Constants.API_KEY)
+                database.asteroidDao.deleteAllPictures()
                 database.asteroidDao.insertPictureOfDay(picture.asDatabaseModel())
             } catch (exc: Exception) {
                 Log.e("RefreshPicture","Unable to refreshPictureOfDay: " + exc.message)

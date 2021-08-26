@@ -1,20 +1,27 @@
-package com.udacity.asteroidradar
+package com.udacity.asteroidradar.util
 
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.setPadding
 import androidx.databinding.BindingAdapter
 import com.squareup.picasso.Picasso
-import com.udacity.asteroidradar.main.ApiStatus
+import com.udacity.asteroidradar.R
 
-@BindingAdapter("imageUrl")
-fun bindImage(imgView: ImageView, imgUrl: String?) {
+@BindingAdapter("imageUrl", "dataType")
+fun bindImage(imgView: ImageView, imgUrl: String?, dataType: String?) {
     imgUrl?.let {
-        Picasso.with(imgView.context)
-            .load(it)
-            .placeholder(R.drawable.loading_animation)
-            .error(R.drawable.ic_broken_image)
-            .into(imgView);
+        if (dataType == "video"){
+            imgView.setImageResource(R.drawable.ic_baseline_play_circle_outline_24)
+            imgView.setPadding(350)
+        }else {
+            imgView.setPadding(0)
+            Picasso.with(imgView.context)
+                .load(it)
+                .placeholder(R.drawable.loading_animation)
+                .error(R.drawable.ic_broken_image)
+                .into(imgView);
+        }
     }
 }
 
@@ -65,22 +72,5 @@ fun bindTextViewToDisplayLong(textView: TextView, number: Long) {
 @BindingAdapter("goneIfNotNull")
 fun goneIfNotNull(view: View, it: Any?) {
     view.visibility = if (it != null) View.GONE else View.VISIBLE
-}
-
-@BindingAdapter("apiStatus")
-fun bindStatus(statusImageView: ImageView, status: ApiStatus?) {
-    when (status) {
-        ApiStatus.LOADING -> {
-            statusImageView.visibility = View.VISIBLE
-            statusImageView.setImageResource(R.drawable.loading_animation)
-        }
-        ApiStatus.ERROR -> {
-            statusImageView.visibility = View.VISIBLE
-            statusImageView.setImageResource(R.drawable.ic_connection_error)
-        }
-        ApiStatus.DONE -> {
-            statusImageView.visibility = View.GONE
-        }
-    }
 }
 

@@ -9,32 +9,16 @@ import com.udacity.asteroidradar.database.getDatabase
 import com.udacity.asteroidradar.domain.Asteroid
 import com.udacity.asteroidradar.domain.PictureOfDay
 import com.udacity.asteroidradar.network.Network
+import com.udacity.asteroidradar.repository.AsteroidsFilter
 import com.udacity.asteroidradar.repository.AsteroidsRepository
 import com.udacity.asteroidradar.util.Constants
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
-enum class ApiStatus { LOADING, ERROR, DONE }
-
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val database = getDatabase(application)
     private val asteroidsRepository = AsteroidsRepository(database)
-
-    // The internal MutableLiveData that stores the status of the most recent request
-    private val _status = MutableLiveData<ApiStatus>()
-    val status: LiveData<ApiStatus>
-        get() = _status
-
-//    private val _asteroidsList = MutableLiveData<List<Asteroid>>()
-//    val asteroidsList: LiveData<List<Asteroid>>
-//        get() = _asteroidsList
-
-    val asteroidsList = asteroidsRepository.asteroids
-
-//    private val _pictureOfDay = MutableLiveData<PictureOfDay>()
-//    val pictureOfDay: LiveData<PictureOfDay>
-//        get() = _pictureOfDay
 
     val pictureOfDay = asteroidsRepository.pictureOfDay
 
@@ -42,9 +26,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val navigateToDetails
         get() = _navigateToDetails
 
+    private val _asteroidsList = MutableLiveData<List<Asteroid>>()
+    val asteroidsList: LiveData<List<Asteroid>>
+        get() = _asteroidsList
+
+    private val asteroidListObserver = Observer<List<Asteroid>> {
+        _asteroidsList.value = it
+    }
+
+    private var asteroidListLiveData: LiveData<List<Asteroid>>
+
     init{
-//        getAsteroids()
-//        getPictureOfDay()
+        asteroidListLiveData =
+            asteroidsRepository.getAsteroids(AsteroidsFilter.SHOW_WEEK)
+        asteroidListLiveData.observeForever(asteroidListObserver)
         refreshAsteroid()
         refreshPicOfDay()
     }
@@ -69,35 +64,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-//    private fun getAsteroids(){
-//        viewModelScope.launch {
-//            _status.value = ApiStatus.LOADING
-//            try{
-//                val asteroidsString = Network.asteroids.getAsteroidsList(
-//                    getNextSevenDaysFormattedDates()[0],
-//                    getNextSevenDaysFormattedDates()[getNextSevenDaysFormattedDates().size-2],
-//                    Constants.API_KEY)
-//                val json = JSONObject(asteroidsString)
-//                _asteroidsList.postValue(parseAsteroidsJsonResult(json))
-//                _status.value = ApiStatus.DONE
-//            } catch (e: Exception) {
-//                Log.e("Error getting Asteroids", e.toString())
-//                _status.value = ApiStatus.ERROR
-//            }
-//        }
-//    }
+    fun updateFilter(filter: AsteroidsFilter){
+        asteroidListLiveData =
+            asteroidsRepository.getAsteroids(filter)
+        asteroidListLiveData.observeForever(asteroidListObserver)
+    }
 
-//    private fun getPictureOfDay() {
-//        viewModelScope.launch {
-//            _status.value = ApiStatus.LOADING
-//            try {
-//                _pictureOfDay.value = Network.pictureOfDay.getPictureOfDay(Constants.API_KEY)
-//                _status.value = ApiStatus.DONE
-//            } catch (e: Exception) {
-//                Log.e("Error Picture of Day", e.toString())
-//                _status.value = ApiStatus.ERROR
-//            }
-//        }
-//    }
 
+    override fun onCleared() {
+        super.onCleared()
+        asteroidListLiveData.removeObserver(asteroidListObserver)
+    }
 }

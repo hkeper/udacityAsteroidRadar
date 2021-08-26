@@ -8,7 +8,13 @@ import com.udacity.asteroidradar.domain.PictureOfDay
 @Dao
 interface AsteroidDao {
     @Query("select * from databaseasteroid order by closeApproachDate asc")
-    fun getAsteroids(): LiveData<List<DatabaseAsteroid>>
+    fun getAllAsteroids(): LiveData<List<DatabaseAsteroid>>
+
+    @Query("select * from databaseasteroid where date(closeApproachDate) between date('now') and date('now','+7 days') order by closeApproachDate asc")
+    fun getWeekAsteroids(): LiveData<List<DatabaseAsteroid>>
+
+    @Query("select * from databaseasteroid where closeApproachDate = date('now') order by closeApproachDate asc")
+    fun getTodayAsteroids(): LiveData<List<DatabaseAsteroid>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg asteroids: DatabaseAsteroid)
@@ -18,6 +24,9 @@ interface AsteroidDao {
 
     @Query("select * from databasepicture")
     fun getPictureOfDay(): LiveData<DatabasePicture>
+
+    @Query("delete from databasepicture")
+    suspend fun deleteAllPictures()
 }
 
 @Database(entities = [DatabaseAsteroid::class, DatabasePicture::class],

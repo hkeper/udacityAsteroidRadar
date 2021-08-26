@@ -24,4 +24,5 @@
     <string name="asteroid_name">Asteroid Name</string>
     <string name="hazardous_icon_desc">Icon that shows is this asteroid hazardous or not</string>
     <string name="loading_image">Loading image</string>
+    <string name="loading">Loading bar</string>
 </resources>
