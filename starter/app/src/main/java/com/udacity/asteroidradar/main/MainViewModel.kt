@@ -1,19 +1,12 @@
 package com.udacity.asteroidradar.main
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.*
-import com.udacity.asteroidradar.api.getNextSevenDaysFormattedDates
-import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.getDatabase
 import com.udacity.asteroidradar.domain.Asteroid
-import com.udacity.asteroidradar.domain.PictureOfDay
-import com.udacity.asteroidradar.network.Network
 import com.udacity.asteroidradar.repository.AsteroidsFilter
 import com.udacity.asteroidradar.repository.AsteroidsRepository
-import com.udacity.asteroidradar.util.Constants
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -69,7 +62,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             asteroidsRepository.getAsteroids(filter)
         asteroidListLiveData.observeForever(asteroidListObserver)
     }
-
 
     override fun onCleared() {
         super.onCleared()

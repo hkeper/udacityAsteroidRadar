@@ -1,6 +1,5 @@
 package com.udacity.asteroidradar.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 import com.udacity.asteroidradar.api.getNextSevenDaysFormattedDates
@@ -15,8 +14,9 @@ import com.udacity.asteroidradar.util.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import timber.log.Timber
 
-enum class AsteroidsFilter() { SHOW_WEEK, SHOW_TODAY, SHOW_SAVED }
+enum class AsteroidsFilter { SHOW_WEEK, SHOW_TODAY, SHOW_SAVED }
 
 class AsteroidsRepository (private val database: AsteroidsDatabase) {
 
@@ -29,9 +29,6 @@ class AsteroidsRepository (private val database: AsteroidsDatabase) {
                 it.asDomainModel()
             }
             AsteroidsFilter.SHOW_SAVED -> Transformations.map(database.asteroidDao.getAllAsteroids()) {
-                it.asDomainModel()
-            }
-            else -> Transformations.map(database.asteroidDao.getWeekAsteroids()) {
                 it.asDomainModel()
             }
         }
@@ -53,7 +50,17 @@ class AsteroidsRepository (private val database: AsteroidsDatabase) {
                 val asteroidsList = parseAsteroidsJsonResult(json)
                 database.asteroidDao.insertAll(*NetworkAsteroidContainer(asteroidsList).asDatabaseModel())
             } catch (exc: Exception) {
-                Log.e("RefreshAsteroids","Unable to refreshAsteroids: " + exc.message)
+                Timber.e("Unable to refreshAsteroids: %s", exc.message)
+            }
+        }
+    }
+
+    suspend fun deletePreviousAsteroids() {
+        withContext(Dispatchers.IO) {
+            try {
+                database.asteroidDao.deletePreviousAsteroids()
+            } catch (exc: Exception) {
+                Timber.e("Unable to deleteAsteroids: %s", exc.message)
             }
         }
     }
@@ -65,7 +72,7 @@ class AsteroidsRepository (private val database: AsteroidsDatabase) {
                 database.asteroidDao.deleteAllPictures()
                 database.asteroidDao.insertPictureOfDay(picture.asDatabaseModel())
             } catch (exc: Exception) {
-                Log.e("RefreshPicture","Unable to refreshPictureOfDay: " + exc.message)
+                Timber.e("Unable to refreshPictureOfDay: %s", exc.message)
             }
         }
     }

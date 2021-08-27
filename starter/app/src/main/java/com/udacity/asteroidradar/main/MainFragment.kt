@@ -5,12 +5,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.udacity.asteroidradar.R
 import com.udacity.asteroidradar.databinding.FragmentMainBinding
-import com.udacity.asteroidradar.domain.PictureOfDay
 import com.udacity.asteroidradar.repository.AsteroidsFilter
 
 class MainFragment : Fragment() {
@@ -30,13 +28,13 @@ class MainFragment : Fragment() {
         })
         binding.asteroidRecycler.adapter = adapter
 
-        viewModel.asteroidsList.observe(viewLifecycleOwner, Observer {
+        viewModel.asteroidsList.observe(viewLifecycleOwner, {
             it?.let {
                 adapter.submitList(it)
             }
         })
 
-        viewModel.navigateToDetails.observe(viewLifecycleOwner, Observer {asteroid ->
+        viewModel.navigateToDetails.observe(viewLifecycleOwner, { asteroid ->
             asteroid?.let {
                 this.findNavController().navigate(
                     MainFragmentDirections.actionShowDetail(asteroid))

@@ -20,7 +20,7 @@ fun bindImage(imgView: ImageView, imgUrl: String?, dataType: String?) {
                 .load(it)
                 .placeholder(R.drawable.loading_animation)
                 .error(R.drawable.ic_broken_image)
-                .into(imgView);
+                .into(imgView)
         }
     }
 }

@@ -3,7 +3,6 @@ package com.udacity.asteroidradar.database
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.udacity.asteroidradar.domain.PictureOfDay
 
 @Dao
 interface AsteroidDao {
@@ -18,6 +17,9 @@ interface AsteroidDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(vararg asteroids: DatabaseAsteroid)
+
+    @Query("delete from databaseasteroid where closeApproachDate <= date('now')")
+    suspend fun deletePreviousAsteroids()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertPictureOfDay(vararg pictureOfDay: DatabasePicture)

@@ -9,4 +9,5 @@
     <color name="potentially_hazardous">#FF8282</color>
     <color name="primaryTextColor">#f0f0f0</color>
     <color name="secondaryTextColor">#fafafa</color>
+    <color name="image_of_day_desc">#55010613</color>
 </resources>

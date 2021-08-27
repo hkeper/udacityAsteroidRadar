@@ -25,4 +25,6 @@
     <string name="hazardous_icon_desc">Icon that shows is this asteroid hazardous or not</string>
     <string name="loading_image">Loading image</string>
     <string name="loading">Loading bar</string>
+    <string name="asteroid_details_image">Asteroid details image</string>
+    <string name="astronomical_unit_explanation_help_button">Astronomical unit explanation help button</string>
 </resources>

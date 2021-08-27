@@ -13,12 +13,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/app_background"
-        tools:context=".MainActivity">
+        tools:context=".main.MainActivity">
 
         <FrameLayout
             android:id="@+id/activity_main_image_of_the_day_layout"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="@dimen/image_of_day_size"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -38,12 +38,12 @@
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:textColor="@android:color/white"
-                android:textStyle="bold"
+                android:padding="@dimen/spacing_normal"
                 android:textSize="20sp"
+                android:textColor="@color/primaryTextColor"
                 android:layout_gravity="bottom"
-                android:background="#55010613"
+                android:background="@color/image_of_day_desc"
+                android:textAppearance="?textAppearanceHeadline6"
                 android:text="@string/image_of_the_day" />
 
         </FrameLayout>
@@ -58,7 +58,7 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/activity_main_image_of_the_day_layout"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_bias="1.0"
             tools:listitem="@layout/asteroid_list_item" />
 
         <ProgressBar
