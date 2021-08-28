@@ -2,6 +2,7 @@ package com.udacity.asteroidradar.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import com.udacity.asteroidradar.BuildConfig
 import com.udacity.asteroidradar.api.getNextSevenDaysFormattedDates
 import com.udacity.asteroidradar.api.parseAsteroidsJsonResult
 import com.udacity.asteroidradar.database.AsteroidsDatabase
@@ -10,7 +11,6 @@ import com.udacity.asteroidradar.domain.Asteroid
 import com.udacity.asteroidradar.network.Network
 import com.udacity.asteroidradar.network.NetworkAsteroidContainer
 import com.udacity.asteroidradar.network.asDatabaseModel
-import com.udacity.asteroidradar.util.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -19,6 +19,8 @@ import timber.log.Timber
 enum class AsteroidsFilter { SHOW_WEEK, SHOW_TODAY, SHOW_SAVED }
 
 class AsteroidsRepository (private val database: AsteroidsDatabase) {
+
+    val apiKey: String = BuildConfig.API_KEY
 
     fun getAsteroids(filter: AsteroidsFilter): LiveData<List<Asteroid>> {
         return when (filter) {
@@ -44,7 +46,7 @@ class AsteroidsRepository (private val database: AsteroidsDatabase) {
                 val asteroidsString = Network.asteroids.getAsteroidsList(
                     getNextSevenDaysFormattedDates()[0],
                     getNextSevenDaysFormattedDates()[getNextSevenDaysFormattedDates().size - 2],
-                    Constants.API_KEY
+                    apiKey
                 )
                 val json = JSONObject(asteroidsString)
                 val asteroidsList = parseAsteroidsJsonResult(json)
@@ -68,7 +70,7 @@ class AsteroidsRepository (private val database: AsteroidsDatabase) {
     suspend fun refreshPictureOfDay() {
         withContext(Dispatchers.IO) {
             try {
-                val picture = Network.pictureOfDay.getPictureOfDay(Constants.API_KEY)
+                val picture = Network.pictureOfDay.getPictureOfDay(apiKey)
                 database.asteroidDao.deleteAllPictures()
                 database.asteroidDao.insertPictureOfDay(picture.asDatabaseModel())
             } catch (exc: Exception) {

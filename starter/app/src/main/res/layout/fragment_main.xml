@@ -30,7 +30,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 app:srcCompat="@drawable/placeholder_picture_of_day"
-                android:contentDescription="@string/image_of_the_day"
+                android:contentDescription="@{viewModel.pictureOfDay.title}"
                 app:imageUrl="@{viewModel.pictureOfDay.url}"
                 app:dataType="@{viewModel.pictureOfDay.mediaType}" />
 
@@ -44,7 +44,7 @@
                 android:layout_gravity="bottom"
                 android:background="@color/image_of_day_desc"
                 android:textAppearance="?textAppearanceHeadline6"
-                android:text="@string/image_of_the_day" />
+                android:text="@{viewModel.pictureOfDay.title}" />
 
         </FrameLayout>
 
